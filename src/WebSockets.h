@@ -21,10 +21,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
-
 #ifndef WEBSOCKETS_H_
 #define WEBSOCKETS_H_
-
+#define ESP32
 #ifdef STM32_DEVICE
 #include <application.h>
 #define bit(b) (1UL << (b)) // Taken directly from Arduino.h

@@ -126,10 +126,13 @@ void WebSocketsClient::beginSocketIOSSL(String host, uint16_t port, String url, 
 /**
  * called in arduino loop
  */
+
 void WebSocketsClient::loop(void) {
+	
+
     if(!clientIsConnected(&_client)) {
         // do not flood the server
-        if((millis() - _lastConnectionFail) < _reconnectInterval) {
+        if((millis() - _lastConnectionFail) < _reconnectInterval && _lastConnectionFail > 0) {
             return;
         }
 
@@ -160,15 +163,17 @@ void WebSocketsClient::loop(void) {
             return;
         }
 
+
         if(_client.tcp->connect(_host.c_str(), _port)) {
             connectedCb();
             _lastConnectionFail = 0;
         } else {
-            connectFailedCb();
+				connectFailedCb();
             _lastConnectionFail = millis();
 
         }
     } else {
+
         handleClientData();
     }
 }
