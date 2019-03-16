@@ -127,13 +127,13 @@ void WebSocketsClient::beginSocketIOSSL(String host, uint16_t port, String url, 
  * called in arduino loop
  */
 
-void WebSocketsClient::loop(void) {
-	
+bool WebSocketsClient::loop(void) {
 
-    if(!clientIsConnected(&_client)) {
+	bool anyActions = false;
+	if(!clientIsConnected(&_client)) {
         // do not flood the server
         if((millis() - _lastConnectionFail) < _reconnectInterval && _lastConnectionFail > 0) {
-            return;
+			return anyActions;
         }
 
 #if (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP32)
@@ -160,7 +160,7 @@ void WebSocketsClient::loop(void) {
 
         if(!_client.tcp) {
             DEBUG_WEBSOCKETS("[WS-Client] creating Network class failed!");
-            return;
+			return anyActions;
         }
 
 
@@ -174,8 +174,9 @@ void WebSocketsClient::loop(void) {
         }
     } else {
 
-        handleClientData();
+		anyActions = handleClientData();
     }
+	return anyActions;
 }
 #endif
 
@@ -435,7 +436,7 @@ bool WebSocketsClient::clientIsConnected(WSclient_t * client) {
 /**
  * Handel incomming data from Client
  */
-void WebSocketsClient::handleClientData(void) {
+bool WebSocketsClient::handleClientData(void) {
     int len = _client.tcp->available();
     if(len > 0) {
         switch(_client.status) {
@@ -451,10 +452,13 @@ void WebSocketsClient::handleClientData(void) {
                 WebSockets::clientDisconnect(&_client, 1002);
                 break;
         }
-    }
+		delay(0);
+		return true;
+	}
 #if (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP32)
     delay(0);
 #endif
+	return false;
 }
 #endif
 

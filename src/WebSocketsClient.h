@@ -57,7 +57,7 @@ class WebSocketsClient: private WebSockets {
 #endif
 
 #if (WEBSOCKETS_NETWORK_TYPE != NETWORK_ESP8266_ASYNC)
-        void loop(void);
+        bool loop(void);
 #else
         // Async interface not need a loop call
         void loop(void) __attribute__ ((deprecated)) {}
@@ -106,7 +106,7 @@ class WebSocketsClient: private WebSockets {
         bool clientIsConnected(WSclient_t * client);
 
 #if (WEBSOCKETS_NETWORK_TYPE != NETWORK_ESP8266_ASYNC)
-        void handleClientData(void);
+        bool handleClientData(void);
 #endif
 
         void sendHeader(WSclient_t * client);
